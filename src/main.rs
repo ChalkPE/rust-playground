@@ -6,22 +6,36 @@
 
 use std::collections::HashMap;
 
-fn main() {
-    let mut sum = 0;
-    let mut map: HashMap<i32, i32> = HashMap::new();
-    let mut list: Vec<i32> = vec![-15, 30, 7, -5, -12, 7, 51, -17, 0, 43, 7, -6, -38];
+fn mean(list: &Vec<i32>) -> f64 {
+    let sum: i32 = list.iter().sum();
+    sum as f64 / list.len() as f64
+}
 
+fn median(list: &mut Vec<i32>) -> i32 {
     list.sort();
-    for &i in &list {
-        sum += i;
-        *(map.entry(i).or_insert(0)) += 1;
+    list[list.len() / 2]
+}
+
+fn mode(list: &Vec<i32>) -> i32 {
+    let mut map = HashMap::new();
+    for &n in list {
+        *(map.entry(n).or_insert(0)) += 1;
     }
 
-    println!("mean: {:?}", sum / list.len() as i32);
-    println!("median: {:?}", list[list.len() / 2 as usize]);
+    let mode = map
+        .into_iter()
+        .max_by(|a, b| a.1.cmp(&b.1));
 
-    match map.iter().max_by(|x, y| x.1.cmp(y.1)) {
-        None => println!("mode: unknown"),
-        Some(mode) => println!("mode: {:?}", mode.0)
+    match mode {
+        Some(m) => m.0,
+        None => panic!("list is empty")
     }
+}
+
+fn main() {
+    let list = vec![-1, 7, -5, 7, -13, 0, 7, -6, 12];
+
+    println!("mean: {:?}", mean(&list));
+    println!("median: {:?}", median(&mut list.clone()));
+    println!("mode: {:?}", mode(&list));
 }
